@@ -2,13 +2,17 @@ import React from 'react';
 import { createReactionStore } from './reaction';
 import { useUser } from './useUser';
 import { useTheme } from './useTheme';
-import { useHistory } from './useHistory';
+import { useExtreHistory } from './useHistory';
 
 export const { Provider, useStore, useSelector, useImmerState } = createReactionStore({
+  extraHistory: useExtreHistory,
   user: useUser,
   theme: useTheme,
-  history: useHistory
+}, {
+
 });
+
+export type StoreType = ReturnType<typeof useStore>;
 
 export function StoreProvider({ children }: { children: React.ReactNode; }) {
 

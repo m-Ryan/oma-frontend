@@ -11,14 +11,15 @@ export interface StoreParams {
   debug?: boolean;
 }
 
-export function createReactionStore<T extends Partial<StoreType>, K extends keyof T>(store: T, params: StoreParams = {}) {
+export function createReactionStore<T extends Partial<StoreType>, K extends keyof T>(store: T, initStore: Partial<{ [key in keyof T]: any }> = {}, params: StoreParams = {}) {
   const { debug = false } = params;
   return {
     Provider({ children }: { children: React.ReactNode; }) {
       const mapStore: StoreType = {};
 
       Object.keys(store).forEach((key) => {
-        mapStore[key] = store[key]();
+        const initState = initStore[key];
+        mapStore[key] = store[key](mapStore, initState);
       });
 
       return (
@@ -29,25 +30,25 @@ export function createReactionStore<T extends Partial<StoreType>, K extends keyo
         </storeContext.Provider>
       );
     },
-    useImmerState<T>(initState: T): [T, (dispatch: (newState: T) => T) => void] {
-      const [state, setState] = useState<T>(initState);
+    useImmerState<S>(initState: S): [S, (dispatch: (newState: S) => S) => void] {
+      const [state, setState] = useState<S>(initState);
 
-      const debuggerLog = useCallback((nextState: T) => {
+      const debuggerLog = useCallback((nextState: S) => {
         // debugger
         return nextState;
       }, []);
 
-      const setEnhanceState = useCallback((setData: (newState: T) => T) => {
+      const setEnhanceState = useCallback((setData: (newState: S) => S) => {
 
         setState((newState) => {
-          return debug ? debuggerLog(produce<T>(newState, setData as any)) : produce<T>(newState, setData as any);
+          return debug ? debuggerLog(produce<S>(newState, setData as any)) : produce<S>(newState, setData as any);
         });
       }, [debuggerLog]);
 
       return [state, setEnhanceState];
     },
     useStore() {
-      return useContext<T>(storeContext);
+      return useContext<{ [key in keyof T]: ReturnType<T[key]> }>(storeContext);
     },
     useSelector<P extends K>(selector: P) {
       return useContext(storeContext)[selector] as ReturnType<T[P]>;
