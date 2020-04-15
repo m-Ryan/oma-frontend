@@ -4,7 +4,7 @@ import { useUser } from './useUser';
 import { useTheme } from './useTheme';
 import { useExtreHistory } from './useHistory';
 
-export const { Provider, useStore, useSelector, useImmerState } = createReactionStore({
+export const { Provider, useStore, useSelector, useImmerState, getStore } = createReactionStore({
   extraHistory: useExtreHistory,
   user: useUser,
   theme: useTheme,

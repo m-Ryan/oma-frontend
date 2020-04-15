@@ -13,15 +13,18 @@ export interface StoreParams {
 
 export function createReactionStore<T extends Partial<StoreType>, K extends keyof T>(store: T, initStore: Partial<{ [key in keyof T]: any }> = {}, params: StoreParams = {}) {
   const { debug = false } = params;
+  let storeRef: { current?: { [key in keyof T]: ReturnType<T[key]> }; } = {
+    current: undefined
+  };
   return {
     Provider({ children }: { children: React.ReactNode; }) {
-      const mapStore: StoreType = {};
 
+      const mapStore: any = {};
       Object.keys(store).forEach((key) => {
         const initState = initStore[key];
-        mapStore[key] = store[key](mapStore, initState);
+        mapStore[key] = store[key](initState);
       });
-
+      storeRef.current = mapStore;
       return (
         <storeContext.Provider
           value={mapStore}
@@ -52,6 +55,9 @@ export function createReactionStore<T extends Partial<StoreType>, K extends keyo
     },
     useSelector<P extends K>(selector: P) {
       return useContext(storeContext)[selector] as ReturnType<T[P]>;
+    },
+    getStore() {
+      return storeRef.current!;
     }
   };
 }

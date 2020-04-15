@@ -17,7 +17,7 @@ export function BasicLayout(props: IProps) {
   useEffect(() => {
     getUser()
       .catch(() => {
-        replace(LOGIN_ADDRESS)
+        replace(LOGIN_ADDRESS);
       });
   }, [getUser, replace]);
 

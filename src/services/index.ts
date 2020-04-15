@@ -1,4 +1,3 @@
-import './axios.config';
 import { common } from '@/services/common';
 import { article } from './article';
 import { user } from './user';

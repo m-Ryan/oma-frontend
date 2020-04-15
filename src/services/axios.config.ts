@@ -14,21 +14,41 @@ axiosInstance.interceptors.request.use(async function (config) {
   }
 });
 
-axiosInstance.interceptors.response.use(function <T>(res: AxiosResponse<T>) {
-  return new Promise((resolve, reject) => {
-    return resolve(res);
-  });
-});
+axiosInstance.interceptors.response.use(
+  <T>(res: AxiosResponse<T>) => {
+    return new Promise((resolve, reject) => {
+      resolve(res);
+    });
+  },
+  (err) => {
+    if (!err.response) {
+      err.response = {
+        data: {}
+      };
+    }
+    throw {
+      message: err.response.data.message || err.response.statusText,
+      code: err.response.status,
+      data: err.response.data
+    };
+  }
+);
 
 export const request = {
+  async use<T>(config: AxiosRequestConfig) {
+    return axiosInstance.request<T>(config)
+      .then(data => data.data);
+
+  },
+
   async get<T>(url: string, config?: AxiosRequestConfig | undefined) {
-    return axiosInstance.get<T>(url, config).then(data => data.data);
+    return request.use<T>({ method: 'get', url, ...config });
   },
   async post<T>(
     url: string,
     data?: any,
     config?: AxiosRequestConfig | undefined
   ) {
-    return axiosInstance.post<T>(url, data, config).then(data => data.data);
+    return request.use<T>({ method: 'post', url, data, ...config });
   }
 };

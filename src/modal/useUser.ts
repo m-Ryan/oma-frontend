@@ -1,5 +1,5 @@
-import { useImmerState } from '.';
-import { useMemo, useCallback, useState } from 'react';
+import { useImmerState, getStore } from '.';
+import { useCallback } from 'react';
 import services from '../services';
 import { IUser } from '../services/user';
 import { message } from 'antd';
@@ -11,11 +11,18 @@ export function useUser() {
   const [user, setUser] = useImmerState<IUser | null>(null);
 
   const login = useCallback(async ({ nickname, password, saved }: LoginDto) => {
+
     try {
       const userData = await services.user.login(nickname, password);
       UserStorage.setToken(userData.token, saved);
       setUser(() => userData);
       message.success('登录成功');
+      const { extraHistory: { isFirstPage, history } } = getStore();
+      if (isFirstPage) {
+        history.replace('/');
+      } else {
+        history.goBack();
+      }
     } catch (error) {
       message.error(error.message);
     }
