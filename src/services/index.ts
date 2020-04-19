@@ -1,11 +1,11 @@
 import { common } from '@/services/common';
-import { article } from './article';
 import { user } from './user';
+import { project } from './project';
 
 const services = {
   common,
-  article,
-  user
+  user,
+  project
 };
 
 export default services;

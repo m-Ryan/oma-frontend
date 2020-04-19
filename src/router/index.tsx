@@ -8,17 +8,19 @@ import { Home } from "../pages/home/index";
 import { StoreProvider } from '../modal';
 import { Login } from "@/pages/login";
 import { BasicLayout } from "@/layouts/basic-layout";
+import { ProjectDetail } from '@/pages/project-detail';
 
 export const router = (
 
   <BrowserRouter>
     <StoreProvider>
       <Switch>
-        <Route path="/login" component={Login} />
+        <Route exact path="/login" component={Login} />
 
         <BasicLayout>
           <Switch>
-            <Route path="/home" component={Home} />
+            <Route exact path="/" component={Home} />
+            <Route exact path="/project/:id/detail" component={ProjectDetail} />
           </Switch>
         </BasicLayout>
 
