@@ -26,8 +26,12 @@ axiosInstance.interceptors.response.use(
         data: {}
       };
     }
+    let errMsg = err.response.statusText;
+    if (typeof err.response.data.message === 'string') {
+      errMsg = err.response.data.message;
+    }
     throw {
-      message: err.response.data.message || err.response.statusText,
+      message: errMsg,
       code: err.response.status,
       data: err.response.data
     };

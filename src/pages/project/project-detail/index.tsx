@@ -7,7 +7,7 @@ import { getFormatDate } from '@/utils/utils';
 import { ProjectTaskStatus } from '@/constants';
 import { Button } from 'antd';
 import { useParams } from 'react-router-dom';
-import { getPtojectTaskStatus } from '../selectors/projectTask';
+import { getPtojectTaskStatus } from '../../selectors/projectTask';
 
 
 
@@ -27,7 +27,7 @@ export function ProjectDetail() {
         { title: '结束时间', dataIndex: 'updated_at', render: (created_at: ProjectTask['created_at']) => getFormatDate(created_at, 'YYYY-MM-DD HH:mm'), },
         { title: '状态', dataIndex: 'status', render: (status: ProjectTask['status']) => getPtojectTaskStatus(status), },
         { title: '操作', render: (data: ProjectTask) => <Button type="link" href={`/project/${data.project_id}`}>查看</Button>, },
-      ]} rowKey="project_id" fetch={services.project.getHistory} payload={{ id }} />
+      ]} rowKey="project_id" fetch={services.project.getHistory} payload={{ id, }} />
     </div>
   );
 }

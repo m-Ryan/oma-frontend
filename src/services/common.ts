@@ -37,11 +37,15 @@ export const common = {
         children: [
           {
             name: '项目列表',
-            url: '/project'
+            url: '/'
           },
           {
             name: '构建列表',
             url: '/project/build'
+          },
+          {
+            name: 'ssh配置',
+            url: '/project/ssh'
           }
 
         ]

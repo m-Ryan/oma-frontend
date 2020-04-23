@@ -16,6 +16,7 @@ interface Props<T> {
   rowKey: string | GetRowKey<object>;
   payload?: { [key: string]: any; };
   fetch: (...payload: any) => Promise<ResponseList<T>>;
+  onChange?: (payload: TablePayload & { [key: string]: any; }) => void;
 }
 
 interface TableState<T extends any = any> {
@@ -30,7 +31,7 @@ interface TablePayload {
 
 export function Table<T>(props: Props<T>) {
   const [data, setData] = useImmerState<TableState>({ total: 0, list: [] });
-  const [payload, setPayload] = useImmerState<TablePayload>({ page: 0, size: 10 });
+  const [payload, setPayload] = useImmerState<TablePayload>({ page: 0, size: 10, ...props.payload });
   const { fetch } = props;
 
   // // merge 
@@ -61,6 +62,7 @@ export function Table<T>(props: Props<T>) {
       });
 
   }, [fetch, payload, setData]);
+
 
   const fullColumn = useMemo(() => {
     return props.columns.map(item => ({

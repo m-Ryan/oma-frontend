@@ -8,7 +8,8 @@ import { Home } from "../pages/home/index";
 import { StoreProvider } from '../modal';
 import { Login } from "@/pages/login";
 import { BasicLayout } from "@/layouts/basic-layout";
-import { ProjectDetail } from '@/pages/project-detail';
+import { ProjectDetail } from '@/pages/project/project-detail';
+import { SSHConfig } from '@/pages/project/ssh-config';
 
 export const router = (
 
@@ -20,6 +21,7 @@ export const router = (
         <BasicLayout>
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/project/ssh" component={SSHConfig} />
             <Route exact path="/project/:id/detail" component={ProjectDetail} />
           </Switch>
         </BasicLayout>

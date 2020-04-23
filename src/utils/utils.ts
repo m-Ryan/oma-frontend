@@ -25,3 +25,12 @@ export function getCookie(key: string) {
 export function getFormatDate(timeStamp: number, format: string = 'YYYY-MM-DD') {
   return dayjs(timeStamp * 1000).format(format);
 }
+
+/**
+ * 判断是不是数字，或者字符串数字
+ * @param num
+ */
+export function isNumber(num: any): num is number {
+  if (typeof num !== 'string' && typeof num !== 'number') return false;
+  return new RegExp("^(\\-|\\+)?\\d+(\\.\\d+)?$").test(num.toString());
+}
