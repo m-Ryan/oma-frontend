@@ -15,7 +15,22 @@ export function ProjectModal({ showBtn, formData = {
   repository_name: "react-admin",
   updated_at: 1587306285,
   user_id: 1,
-  envs: []
+  envs: [
+    {
+      project_env_id: 0,
+      project_id: 0,
+      name: 'master',
+      user_id: 0,
+      ssh_id: 0,
+      auto_deploy: 1,
+      public_path: '',
+      env_name: '',
+      branch: '',
+      created_at: 0,
+      updated_at: 0,
+      deleted_at: 0,
+    }
+  ]
 } }: { showBtn: React.ReactNode; formData?: Project; }) {
   const [visible, setVisible] = useState(false);
   const { form, createInput, verify } = useForm<Project>(
