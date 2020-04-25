@@ -14,16 +14,15 @@ export function SSHModal({ showBtn, formData = {
   privateKey: '',
   created_at: 0,
   user_id: 0,
-  type: 0,
+  type: 1,
   updated_at: 0,
   deleted_at: 0,
 } }: { showBtn: React.ReactNode; formData?: SSH; }) {
   const [visible, setVisible] = useState(false);
-  const { form, createInput, createRadio, verify } = useForm<SSH & { radio: string; }>({
-    ...formData,
-    radio: formData && formData.privateKey ? 'privateKey' : 'password'
-  });
-  const { createSSH } = useSelector('project');
+  const { form, createInput, createRadio, verify } = useForm<SSH>(
+    formData
+  );
+  const { create, update } = useSelector('ssh');
 
   const submit = useCallback(() => {
     const errMsg = verify();
@@ -31,8 +30,13 @@ export function SSHModal({ showBtn, formData = {
       message.warning(errMsg);
       return;
     }
-    createSSH(form);
-  }, [createSSH, form, verify]);
+    if (form.ssh_id) {
+      update(form.ssh_id, form);
+    } else {
+      create(form);
+    }
+
+  }, [create, form, update, verify]);
 
   return (
     <>
@@ -78,14 +82,14 @@ export function SSHModal({ showBtn, formData = {
           </div>
           <Form.Item label="连接类型">
 
-            <Radio.Group  {...createRadio('radio')} >
-              <Radio value="password">password</Radio>
-              <Radio value="privateKey">privateKey</Radio>
+            <Radio.Group  {...createRadio('type')} >
+              <Radio value={1}>password</Radio>
+              <Radio value={2}>privateKey</Radio>
             </Radio.Group>
 
           </Form.Item>
           {
-            form.radio === 'password'
+            form.type === 1
               ? (
                 <Form.Item label="password">
                   <Input

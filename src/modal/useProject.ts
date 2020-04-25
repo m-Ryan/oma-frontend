@@ -8,11 +8,49 @@ import { useHistory } from 'react-router-dom';
 export function useProject() {
   const history = useHistory();
 
-  const createProject = useCallback(async () => {
+  const create = useCallback(async (payload: {
+    name: string,
+    git_path: string;
+    envs: {
+      name: string,
+      public_path: string,
+      env_name: string,
+      branch: string,
+      ssh_id: number,
+      auto_deploy: number;
+    }[];
+  }) => {
+    try {
+      await services.project.create(payload);
+      message.success('创建成功');
+      history.replace('#');
+    } catch (error) {
+      message.error(error.message);
+    }
+  }, [history]);
 
-  }, []);
+  const update = useCallback(async (sshId: number, payload: Partial<{
+    name: string,
+    git_path: string;
+    envs: {
+      name: string,
+      public_path: string,
+      env_name: string,
+      branch: string,
+      ssh_id: number,
+      auto_deploy: number;
+    }[];
+  }>) => {
+    try {
+      await services.project.update(sshId, payload);
+      message.success('更新成功');
+      history.replace('#');
+    } catch (error) {
+      message.error(error.message);
+    }
+  }, [history]);
 
-  const removeSSH = useCallback(async (sshId: number) => {
+  const remove = useCallback(async (sshId: number) => {
     try {
       await services.project.deleteSSH(sshId);
       message.success('删除成功');
@@ -22,25 +60,9 @@ export function useProject() {
     }
   }, [history]);
 
-  const createSSH = useCallback(async (payload: {
-    name: string,
-    host: string,
-    port: number | string,
-    username: string,
-    password?: string,
-    privateKey?: string;
-  }) => {
-    try {
-      await services.project.createSSHConfig(payload);
-      message.success('创建成功');
-      history.replace('#');
-    } catch (error) {
-      message.error(error.message);
-    }
-  }, [history]);
-
   return {
-    removeSSH,
-    createSSH
+    remove,
+    create,
+    update
   };
 }

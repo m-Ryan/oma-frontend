@@ -4,12 +4,14 @@ import { useUser } from './useUser';
 import { useTheme } from './useTheme';
 import { useExtreHistory } from './useHistory';
 import { useProject } from './useProject';
+import { useSSH } from './useSSH';
 
 export const { Provider, useStore, useSelector, useImmerState, getStore } = createReactionStore({
   extraHistory: useExtreHistory,
   user: useUser,
   theme: useTheme,
-  project: useProject
+  project: useProject,
+  ssh: useSSH,
 }, {
 
 });

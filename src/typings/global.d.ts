@@ -1,12 +1,12 @@
 interface Window {
-	__INITIAL_STATE__?: {} | undefined | { [key: string]: any };
+	__INITIAL_STATE__?: {} | undefined | { [key: string]: any; };
 	CSS_EXTRACT_COLOR_PLUGIN?:
-		| {
-				source: string;
-				fileName: string;
-				matchColors: string[];
-			}[]
-		| undefined;
+	| {
+		source: string;
+		fileName: string;
+		matchColors: string[];
+	}[]
+	| undefined;
 	_hmt: string[][];
 }
 
@@ -18,23 +18,25 @@ declare namespace NodeJS {
 	}
 	interface Global {
 		window: {
-			__INITIAL_STATE__?: {} | undefined | { [key: string]: any };
+			__INITIAL_STATE__?: {} | undefined | { [key: string]: any; };
 		};
 		CSS_EXTRACT_COLOR_PLUGIN?:
-			| {
-					source: string;
-					fileName: string;
-					matchColors: string[];
-				}[]
-			| undefined;
+		| {
+			source: string;
+			fileName: string;
+			matchColors: string[];
+		}[]
+		| undefined;
 		Blob: {
 			readonly size: number;
 			readonly type: string;
 			slice(start?: number, end?: number, contentType?: string): Blob;
-			new (blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;
+			new(blobParts?: BlobPart[], options?: BlobPropertyBag): Blob;
 		};
 	}
 }
+
+type UnPromisify<T> = T extends PromiseType<infer U> ? U : never;
 
 declare module '*.bmp' {
 	const src: string;
@@ -76,16 +78,16 @@ declare module '*.svg' {
 }
 
 declare module '*.module.css' {
-	const classes: { [key: string]: string };
+	const classes: { [key: string]: string; };
 	export default classes;
 }
 
 declare module '*.scss' {
-	const classes: { [key: string]: string };
+	const classes: { [key: string]: string; };
 	export default classes;
 }
 
 declare module '*.module.sass' {
-	const classes: { [key: string]: string };
+	const classes: { [key: string]: string; };
 	export default classes;
 }

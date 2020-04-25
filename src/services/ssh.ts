@@ -1,25 +1,16 @@
 import { request } from '@/services/axios.config';
 import { ResponseList } from './common.typing';
 
-export const project = {
+export const ssh = {
   create(payload: {
     name: string,
-    git_path: string;
-    envs: {
-      name: string,
-      public_path: string,
-      env_name: string,
-      branch: string,
-      ssh_id: number,
-      auto_deploy: number;
-    }[];
+    host: string,
+    port: number | string,
+    username: string,
+    password?: string,
+    privateKey?: string;
   }) {
-    return request.post<ResponseList<Project>>('/api/project/create', payload);
-  },
-  getList(params: { page: number, size: number; }) {
-    return request.get<ResponseList<Project>>('/api/project/list', {
-      params
-    });
+    return request.post<ResponseList<Project>>('/api/project/create-ssh-config', payload);
   },
   update(sshId: number, payload: Partial<{
     name: string,
@@ -31,7 +22,12 @@ export const project = {
   }>) {
     return request.post<ResponseList<Project>>('/api/project/update-ssh', payload, { params: { ssh_id: sshId } });
   },
-  deleteSSH(sshId: number) {
+  getList(params: { page: number, size: number; }) {
+    return request.get<ResponseList<SSH>>('/api/project/ssh-list', {
+      params
+    });
+  },
+  remove(sshId: number) {
     return request.post<ResponseList<SSH>>('/api/project/delete-ssh', undefined, { params: { ssh_id: sshId } });
   },
 };
@@ -44,21 +40,6 @@ export interface Project {
   desc: string;
   created_at: number;
   user_id: number;
-  updated_at: number;
-  deleted_at: number;
-  envs: IEnvsItem[];
-}
-interface IEnvsItem {
-  project_env_id: number;
-  project_id: number;
-  name: string;
-  user_id: number;
-  ssh_id: number;
-  auto_deploy: number;
-  public_path: string;
-  env_name: string;
-  branch: string;
-  created_at: number;
   updated_at: number;
   deleted_at: number;
 }
