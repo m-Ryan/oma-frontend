@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 
 export function useProject() {
+
   const history = useHistory();
 
   const create = useCallback(async (payload: {
@@ -29,7 +30,7 @@ export function useProject() {
     }
   }, [history]);
 
-  const update = useCallback(async (sshId: number, payload: Partial<{
+  const update = useCallback(async (projectId: number, payload: Partial<{
     name: string,
     git_path: string;
     envs: {
@@ -42,7 +43,7 @@ export function useProject() {
     }[];
   }>) => {
     try {
-      await services.project.update(sshId, payload);
+      await services.project.update(projectId, payload);
       message.success('更新成功');
       history.replace('#');
     } catch (error) {
@@ -50,9 +51,9 @@ export function useProject() {
     }
   }, [history]);
 
-  const remove = useCallback(async (sshId: number) => {
+  const remove = useCallback(async (projectId: number) => {
     try {
-      await services.project.deleteSSH(sshId);
+      await services.project.remove(projectId);
       message.success('删除成功');
       history.replace('#');
     } catch (error) {

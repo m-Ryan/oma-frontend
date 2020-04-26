@@ -21,7 +21,7 @@ export const project = {
       params
     });
   },
-  update(sshId: number, payload: Partial<{
+  update(projectId: number, payload: Partial<{
     name: string,
     host: string,
     port: number | string,
@@ -29,10 +29,10 @@ export const project = {
     password?: string,
     privateKey?: string;
   }>) {
-    return request.post<ResponseList<Project>>('/api/project/update-ssh', payload, { params: { ssh_id: sshId } });
+    return request.post<ResponseList<Project>>('/api/project/update', payload, { params: { project_id: projectId } });
   },
-  deleteSSH(sshId: number) {
-    return request.post<ResponseList<SSH>>('/api/project/delete-ssh', undefined, { params: { ssh_id: sshId } });
+  remove(projectId: number) {
+    return request.post<ResponseList<Project>>('/api/project/remove', undefined, { params: { project_id: projectId } });
   },
 };
 
@@ -46,9 +46,10 @@ export interface Project {
   user_id: number;
   updated_at: number;
   deleted_at: number;
-  envs: IEnvsItem[];
+  environments: IEnvsItem[];
 }
-interface IEnvsItem {
+
+export interface IEnvsItem {
   project_env_id: number;
   project_id: number;
   name: string;
@@ -56,11 +57,12 @@ interface IEnvsItem {
   ssh_id: number;
   auto_deploy: number;
   public_path: string;
-  env_name: string;
+  variables: string;
   branch: string;
   created_at: number;
   updated_at: number;
   deleted_at: number;
+
 }
 
 export interface ProjectTask {
@@ -76,21 +78,6 @@ export interface ProjectTask {
   err_msg: string;
   status: number;
   created_at: number;
-  updated_at: number;
-  deleted_at: number;
-}
-
-export interface SSH {
-  ssh_id: number;
-  name: string;
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  privateKey: string;
-  created_at: number;
-  user_id: number;
-  type: number;
   updated_at: number;
   deleted_at: number;
 }

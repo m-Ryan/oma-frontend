@@ -2,11 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import styles from './index.module.scss';
 import { Table } from '@/components/Table';
 import services from '@/services';
-import { SSH, } from '@/services/project';
 import { getFormatDate } from '@/utils/utils';
 import { Button, PageHeader, Popconfirm } from 'antd';
 import { useSelector } from '@/modal';
 import { SSHModal } from './components/ssh-modal';
+import { SSH } from '@/services/ssh';
 
 export function SSHConfig() {
 

@@ -5,7 +5,7 @@ interface StoreType {
   [key: string]: any,
 }
 
-const storeContext = React.createContext<any>({});
+
 
 export interface StoreParams {
   debug?: boolean;
@@ -16,6 +16,8 @@ export function createReactionStore<T extends Partial<StoreType>, K extends keyo
   let storeRef: { current?: { [key in keyof T]: ReturnType<T[key]> }; } = {
     current: undefined
   };
+  const storeContext = React.createContext<any>({});
+
   return {
     Provider({ children }: { children: React.ReactNode; }) {
 

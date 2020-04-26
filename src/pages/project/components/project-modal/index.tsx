@@ -3,7 +3,24 @@ import { Tabs, Form, Modal, Input, Radio, message } from 'antd';
 import { useSelector } from '@/modal';
 import { useForm, Validators } from '@/hooks/useForm';
 import { Project } from '@/services/project';
+import { EnvironmentForm } from '../environment-form';
+import { useHistory } from 'react-router-dom';
 const TabPane = Tabs.TabPane;
+
+const defaultEnv = {
+  project_env_id: 0,
+  project_id: 0,
+  name: '正式环境',
+  user_id: 0,
+  ssh_id: 0,
+  auto_deploy: 1,
+  public_path: '',
+  variables: `{ NODE_ENV: 'production' }`,
+  branch: 'master',
+  created_at: 0,
+  updated_at: 0,
+  deleted_at: 0,
+};
 
 export function ProjectModal({ showBtn, formData = {
   created_at: 1587306285,
@@ -11,32 +28,30 @@ export function ProjectModal({ showBtn, formData = {
   desc: "",
   git_path: "git@github.com:m-Ryan/react-admin.git",
   name: "admin-后台",
-  project_id: 1,
+  project_id: 0,
   repository_name: "react-admin",
   updated_at: 1587306285,
   user_id: 1,
-  envs: [
-    {
-      project_env_id: 0,
-      project_id: 0,
-      name: 'master',
-      user_id: 0,
-      ssh_id: 0,
-      auto_deploy: 1,
-      public_path: '',
-      env_name: '',
-      branch: '',
-      created_at: 0,
-      updated_at: 0,
-      deleted_at: 0,
-    }
+  environments: [
+    defaultEnv
   ]
 } }: { showBtn: React.ReactNode; formData?: Project; }) {
   const [visible, setVisible] = useState(false);
-  const { form, createInput, verify } = useForm<Project>(
+  const { form, createInput, verify, setForm } = useForm<Project>(
     formData
   );
   const { create, update } = useSelector('project');
+  const { getList, list } = useSelector('ssh');
+
+  useEffect(() => {
+    getList();
+  }, [getList]);
+
+  useEffect(() => {
+    if (visible && list.length === 0) {
+      message.warning('需要先配置SSH');
+    }
+  }, [list.length, visible]);
 
   const submit = useCallback(() => {
     const errMsg = verify();
@@ -51,6 +66,26 @@ export function ProjectModal({ showBtn, formData = {
     }
 
   }, [create, form, update, verify]);
+
+  const onEdit = useCallback((targetKey: string | React.MouseEvent<HTMLElement, MouseEvent>, action: "add" | "remove") => {
+    if (action === 'add') {
+      setForm(newForm => {
+        const nameList = new Array(100).fill(true).map((item, index) => `develop-${index}`);
+        const name = nameList.find(name => form.environments.every(env => env.name !== name))!;
+        newForm.environments.push({
+          ...defaultEnv,
+          name,
+          branch: 'develop'
+        });
+        return newForm;
+      });
+    } else {
+      setForm(newForm => {
+        newForm.environments = newForm.environments.filter(item => item.name !== targetKey);
+        return newForm;
+      });
+    }
+  }, [form.environments, setForm]);
 
   return (
     <>
@@ -78,11 +113,14 @@ export function ProjectModal({ showBtn, formData = {
               placeholder="仓库路径"
             />
           </Form.Item>
-          <Tabs>
-            <TabPane tab="">
-
-
-            </TabPane>
+          <Tabs type="editable-card" onEdit={onEdit}>
+            {
+              form.environments.map((item, index) => (
+                <TabPane key={item.name} tab={item.name} closable={index > 0}>
+                  <EnvironmentForm formData={item} />
+                </TabPane>
+              ))
+            }
           </Tabs>
         </Form>
       </Modal>

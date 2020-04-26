@@ -50,6 +50,7 @@ export function useForm<T extends { [key: string]: any; } = any>(initState: T) {
 
   return {
     form,
+    setForm,
     createInput,
     createRadio,
     verify
