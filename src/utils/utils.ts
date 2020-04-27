@@ -34,3 +34,7 @@ export function isNumber(num: any): num is number {
   if (typeof num !== 'string' && typeof num !== 'number') return false;
   return new RegExp("^(\\-|\\+)?\\d+(\\.\\d+)?$").test(num.toString());
 }
+
+export function delay(time: number = 1000) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}

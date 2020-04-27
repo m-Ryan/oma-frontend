@@ -4,7 +4,6 @@ import services from '../services';
 import { message } from 'antd';
 import { useHistory } from 'react-router-dom';
 
-
 export function useProject() {
 
   const history = useHistory();
@@ -21,11 +20,16 @@ export function useProject() {
       auto_deploy: number;
     }[];
   }) => {
+    const { loading } = getStore();
     try {
+
+      loading.startLoading(services.project.create);
       await services.project.create(payload);
+      loading.finishLoading(services.project.create);
       message.success('创建成功');
       history.replace('#');
     } catch (error) {
+      loading.finishLoading(services.project.create);
       message.error(error.message);
     }
   }, [history]);

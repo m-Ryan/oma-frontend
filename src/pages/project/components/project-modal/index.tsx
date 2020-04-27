@@ -4,7 +4,8 @@ import { useSelector } from '@/modal';
 import { useForm, Validators } from '@/hooks/useForm';
 import { Project } from '@/services/project';
 import { EnvironmentForm } from '../environment-form';
-import { useHistory } from 'react-router-dom';
+import services from '@/services';
+import { IEnvsItem } from '@/services/project';
 const TabPane = Tabs.TabPane;
 
 const defaultEnv = {
@@ -36,6 +37,7 @@ export function ProjectModal({ showBtn, formData = {
     defaultEnv
   ]
 } }: { showBtn: React.ReactNode; formData?: Project; }) {
+  const { loadingMap } = useSelector('loading');
   const [visible, setVisible] = useState(false);
   const { form, createInput, verify, setForm } = useForm<Project>(
     formData
@@ -87,6 +89,13 @@ export function ProjectModal({ showBtn, formData = {
     }
   }, [form.environments, setForm]);
 
+  const onChangeEnvironment = useCallback((index: number, data: IEnvsItem) => {
+    setForm(newForm => {
+      newForm.environments[index] = data;
+      return newForm;
+    });
+  }, [setForm]);
+
   return (
     <>
 
@@ -96,6 +105,7 @@ export function ProjectModal({ showBtn, formData = {
         okText="确定"
         cancelText="取消"
         centered
+        confirmLoading={loadingMap[services.project.create]}
         onOk={submit}
         onCancel={() => setVisible(false)}
       >
@@ -117,7 +127,7 @@ export function ProjectModal({ showBtn, formData = {
             {
               form.environments.map((item, index) => (
                 <TabPane key={item.name} tab={item.name} closable={index > 0}>
-                  <EnvironmentForm formData={item} />
+                  <EnvironmentForm onChange={(data: IEnvsItem) => onChangeEnvironment(index, data)} formData={item} />
                 </TabPane>
               ))
             }
