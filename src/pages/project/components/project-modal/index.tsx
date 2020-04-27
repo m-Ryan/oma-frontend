@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Tabs, Form, Modal, Input, Radio, message } from 'antd';
 import { useSelector } from '@/modal';
 import { useForm, Validators } from '@/hooks/useForm';
@@ -96,6 +96,34 @@ export function ProjectModal({ showBtn, formData = {
     });
   }, [setForm]);
 
+  const renderContent = useMemo(() => {
+    if (loadingMap[services.ssh.getList]) return null;
+    return <Form>
+      <Form.Item label="项目名称">
+        <Input
+          {...createInput('name', { validator: Validators.required, label: '项目名称' })}
+          placeholder="项目名称"
+        />
+      </Form.Item>
+
+      <Form.Item label="仓库路径">
+        <Input
+          {...createInput('git_path', { validator: Validators.required, label: '仓库路径' })}
+          placeholder="仓库路径"
+        />
+      </Form.Item>
+      <Tabs type="editable-card" onEdit={onEdit}>
+        {
+          form.environments.map((item, index) => (
+            <TabPane key={item.name} tab={item.name} closable={index > 0}>
+              <EnvironmentForm onChange={(data: IEnvsItem) => onChangeEnvironment(index, data)} formData={item} />
+            </TabPane>
+          ))
+        }
+      </Tabs>
+    </Form>;
+  }, [createInput, form.environments, loadingMap, onChangeEnvironment, onEdit]);
+  console.log('loadingMap[services.ssh.getList]', loadingMap[services.ssh.getList]);
   return (
     <>
 
@@ -109,30 +137,7 @@ export function ProjectModal({ showBtn, formData = {
         onOk={submit}
         onCancel={() => setVisible(false)}
       >
-        <Form>
-          <Form.Item label="项目名称">
-            <Input
-              {...createInput('name', { validator: Validators.required, label: '项目名称' })}
-              placeholder="项目名称"
-            />
-          </Form.Item>
-
-          <Form.Item label="仓库路径">
-            <Input
-              {...createInput('git_path', { validator: Validators.required, label: '仓库路径' })}
-              placeholder="仓库路径"
-            />
-          </Form.Item>
-          <Tabs type="editable-card" onEdit={onEdit}>
-            {
-              form.environments.map((item, index) => (
-                <TabPane key={item.name} tab={item.name} closable={index > 0}>
-                  <EnvironmentForm onChange={(data: IEnvsItem) => onChangeEnvironment(index, data)} formData={item} />
-                </TabPane>
-              ))
-            }
-          </Tabs>
-        </Form>
+        {renderContent}
       </Modal>
       <div style={{ display: 'inline-flex' }} onClick={() => setVisible(true)}>{showBtn}</div>
     </>

@@ -4,8 +4,6 @@ import services from '../services';
 import { message } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { SSH } from '@/services/ssh';
-import { debounce } from 'lodash';
-
 
 export function useSSH() {
   const [list, setList] = useImmerState<SSH[]>([]);
@@ -45,17 +43,23 @@ export function useSSH() {
     }
   }, [history]);
 
+
   const getList = useCallback(async () => {
     if (list.length) {
       return list;
     }
+    const { loading } = getStore();
     try {
+      loading.startLoading(services.ssh.getList);
       const data = await services.ssh.getList({ page: 1, size: 1000 });
       setList(() => data.list);
       return data.list;
     } catch (error) {
       message.error(error.message);
       return list;
+    }
+    finally {
+      loading.finishLoading(services.ssh.getList);
     }
   }, [list, setList]);
 
