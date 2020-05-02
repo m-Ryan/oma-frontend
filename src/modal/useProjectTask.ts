@@ -5,27 +5,16 @@ import { message } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { Project } from '@/services/project';
 
-export function useProject() {
+export function useProjectTask() {
   const [project, setProject] = useImmerState<Project | null>(null);
   const history = useHistory();
 
   const create = useCallback(
-    async (payload: {
-      name: string;
-      git_path: string;
-      envs: {
-        name: string;
-        public_path: string;
-        env_name: string;
-        branch: string;
-        ssh_id: number;
-        auto_deploy: number;
-      }[];
-    }) => {
+    async (projectEnvId: number) => {
       const { loading } = getStore();
       try {
         loading.startLoading(services.project.create);
-        await services.project.create(payload);
+        await services.projectTask.create(projectEnvId);
         loading.finishLoading(services.project.create);
         message.success('创建成功');
         history.replace('#');

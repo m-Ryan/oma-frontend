@@ -1,26 +1,14 @@
 import { request } from '@/services/axios.config';
 import { ResponseList } from './common.typing';
 
-export const project = {
-  create(payload: {
-    name: string;
-    git_path: string;
-    envs: {
-      name: string;
-      public_path: string;
-      env_name: string;
-      branch: string;
-      ssh_id: number;
-      auto_deploy: number;
-    }[];
-  }) {
-    return request.post<ResponseList<Project>>('/api/project/create', payload);
+export const projectTask = {
+  create(projectEnvId: number) {
+    return request.post<ResponseList<Project>>('/api/project-task/create', {
+      project_env_id: projectEnvId
+    });
   },
-  getOne(id: number) {
-    return request.get<Project>(`/api/project/${id}`);
-  },
-  getList(params: { page: number; size: number }) {
-    return request.get<ResponseList<Project>>('/api/project/list', {
+  getList(params: { page: number; size: number; id: number }) {
+    return request.get<ResponseList<ProjectTask>>('/api/project-task/list', {
       params
     });
   },
@@ -35,13 +23,15 @@ export const project = {
       privateKey?: string;
     }>
   ) {
-    return request.post<ResponseList<Project>>('/api/project/update', payload, {
-      params: { project_id: projectId }
-    });
+    return request.post<ResponseList<Project>>(
+      '/api/project-task/update',
+      payload,
+      { params: { project_id: projectId } }
+    );
   },
   remove(projectId: number) {
     return request.post<ResponseList<Project>>(
-      '/api/project/remove',
+      '/api/project-task/remove',
       undefined,
       { params: { project_id: projectId } }
     );

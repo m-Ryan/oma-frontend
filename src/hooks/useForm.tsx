@@ -2,57 +2,94 @@ import React, { useCallback, useRef } from 'react';
 import { useImmerState } from '@/modal';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { isNumber } from 'util';
+import { SelectProps } from 'rc-select';
 
-export function useForm<T extends { [key: string]: any; } = any>(initState: T) {
+export function useForm<T extends { [key: string]: any } = any>(initState: T) {
   const [form, setForm] = useImmerState<T>(initState);
   const validatorsRef = useRef<any>({});
 
   const verify = useCallback(() => {
     const validators = validatorsRef.current;
-    const errItem = Object.keys(validators).map(key => validators[key](form[key])).find(item => !!item);
+    const errItem = Object.keys(validators)
+      .map(key => validators[key](form[key]))
+      .find(item => !!item);
     return errItem;
   }, [form]);
 
-  const createInput = useCallback((name: keyof T, options: { validator?: (data: string) => boolean; errMsg?: string; label?: string; } = {}) => {
-    const validator = options.validator;
-    if (validator) {
-      validatorsRef.current[name] = (data: string) => {
-        if (validator(data)) {
-          return '';
-        }
-        return options.errMsg || `${options.label || name}填写有误`;
+  const createInput = useCallback(
+    (
+      name: keyof T,
+      options: {
+        validator?: (data: string) => boolean;
+        errMsg?: string;
+        label?: string;
+      } = {}
+    ) => {
+      const validator = options.validator;
+      if (validator) {
+        validatorsRef.current[name] = (data: string) => {
+          if (validator(data)) {
+            return '';
+          }
+          return options.errMsg || `${options.label || name}填写有误`;
+        };
+      }
+
+      return {
+        onChange: (
+          event:
+            | React.ChangeEvent<HTMLInputElement>
+            | React.ChangeEvent<HTMLTextAreaElement>
+        ) => {
+          event.persist();
+          setForm(newForm => {
+            newForm[name] = event.target.value as any;
+            return newForm;
+          });
+        },
+        value: form[name]
       };
-    }
+    },
+    [form, setForm]
+  );
 
-    return {
-      onChange: (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-        event.persist();
-        setForm((newForm) => {
-          newForm[name] = event.target.value as any;
+  const createRadio = useCallback(
+    (name: keyof T) => {
+      return {
+        onChange: (event: RadioChangeEvent) => {
+          setForm(newForm => {
+            newForm[name] = event.target.value as any;
+            return newForm;
+          });
+        },
+        value: form[name]
+      };
+    },
+    [form, setForm]
+  );
+
+  const createSelect = useCallback(
+    (name: keyof T) => {
+      const onChangeSelect: SelectProps['onChange'] = (value, option) => {
+        setForm(newForm => {
+          newForm[name] = value as any;
           return newForm;
         });
-      },
-      value: form[name]
-    };
-  }, [form, setForm]);
-
-  const createRadio = useCallback((name: keyof T) => {
-    return {
-      onChange: (event: RadioChangeEvent) => {
-        setForm((newForm) => {
-          newForm[name] = event.target.value as any;
-          return newForm;
-        });
-      },
-      value: form[name]
-    };
-  }, [form, setForm]);
+      };
+      return {
+        onChange: onChangeSelect,
+        value: form[name]
+      };
+    },
+    [form, setForm]
+  );
 
   return {
     form,
     setForm,
     createInput,
     createRadio,
+    createSelect,
     verify
   };
 }
