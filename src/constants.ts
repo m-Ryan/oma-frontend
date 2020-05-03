@@ -8,11 +8,3 @@ export const NORMAL_WIDTH = 375;
 export const BASE_NAME = 'h5';
 export const ASSET_DOMAIN = 'http://assets.maocanhua.cn';
 export const APP_EDITOR_CONTAINER_ID = 'app-editor-container';
-
-
-export enum ProjectTaskStatus {
-  PENDING = 0,
-  SUCCESS = 1,
-  ERROR = 2,
-  OVERWRITE = 3,
-}

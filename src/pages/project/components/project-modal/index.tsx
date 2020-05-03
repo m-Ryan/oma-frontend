@@ -91,9 +91,10 @@ export function ProjectModal({
           return newForm;
         });
       } else {
+        console.log('targetKey', targetKey);
         setForm(newForm => {
           newForm.environments = newForm.environments.filter(
-            item => item.name !== targetKey
+            (item, index) => index !== +targetKey
           );
           return newForm;
         });
@@ -137,7 +138,11 @@ export function ProjectModal({
         </Form.Item>
         <Tabs type="editable-card" onEdit={onEdit}>
           {form.environments.map((item, index) => (
-            <TabPane key={index} tab={item.name} closable={index > 0}>
+            <TabPane
+              key={index.toString()}
+              tab={item.name}
+              closable={form.environments.length > 0}
+            >
               <EnvironmentForm
                 onChange={(data: IEnvsItem) => onChangeEnvironment(index, data)}
                 formData={item}

@@ -9,40 +9,52 @@ export function useSSH() {
   const [list, setList] = useImmerState<SSH[]>([]);
   const history = useHistory();
 
-  const create = useCallback(async (payload: {
-    name: string,
-    host: string,
-    port: number | string,
-    username: string,
-    password?: string,
-    privateKey?: string;
-  }) => {
-    try {
-      await services.ssh.create(payload);
-      message.success('创建成功');
-      history.replace('#');
-    } catch (error) {
-      message.error(error.message);
-    }
-  }, [history]);
+  const create = useCallback(
+    async (payload: {
+      name: string;
+      host: string;
+      port: number | string;
+      username: string;
+      password?: string;
+      privateKey?: string;
+    }) => {
+      try {
+        await services.ssh.create(payload);
+        message.success('创建成功');
+        history.replace('#');
+      } catch (error) {
+        message.error(error.message);
+      }
+    },
+    [history]
+  );
 
-  const update = useCallback(async (sshId: number, payload: {
-    name: string,
-    host: string,
-    port: number | string,
-    username: string,
-    password?: string,
-    privateKey?: string;
-  }) => {
-    try {
-      await services.ssh.update(sshId, payload);
-      message.success('更新成功');
-      history.replace('#');
-    } catch (error) {
-      message.error(error.message);
-    }
-  }, [history]);
-
+  const update = useCallback(
+    async (
+      sshId: number,
+      payload: {
+        name: string;
+        host: string;
+        port: number | string;
+        username: string;
+        password?: string;
+        privateKey?: string;
+      }
+    ) => {
+      const { loading } = getStore();
+      try {
+        loading.startLoading(services.ssh.update);
+        await services.ssh.update(sshId, payload);
+        message.success('更新成功');
+        history.replace('#');
+      } catch (error) {
+        message.error(error.message);
+      } finally {
+        loading.finishLoading(services.ssh.update);
+      }
+    },
+    [history]
+  );
 
   const getList = useCallback(async () => {
     if (list.length) {
@@ -57,21 +69,23 @@ export function useSSH() {
     } catch (error) {
       message.error(error.message);
       return list;
-    }
-    finally {
+    } finally {
       loading.finishLoading(services.ssh.getList);
     }
   }, [list, setList]);
 
-  const remove = useCallback(async (sshId: number) => {
-    try {
-      await services.ssh.remove(sshId);
-      message.success('删除成功');
-      history.replace('#');
-    } catch (error) {
-      message.error(error.message);
-    }
-  }, [history]);
+  const remove = useCallback(
+    async (sshId: number) => {
+      try {
+        await services.ssh.remove(sshId);
+        message.success('删除成功');
+        history.replace('#');
+      } catch (error) {
+        message.error(error.message);
+      }
+    },
+    [history]
+  );
 
   return {
     remove,

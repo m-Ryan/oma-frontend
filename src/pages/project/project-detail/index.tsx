@@ -1,22 +1,24 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import styles from './index.module.scss';
 import { Table } from '@/components/Table';
 import services from '@/services';
-import { Project, ProjectTask } from '@/services/project';
+import { ProjectTask } from '@/services/project';
 import { getFormatDate } from '@/utils/utils';
-import { ProjectTaskStatus } from '@/constants';
-import { Button, PageHeader, Select } from 'antd';
+import { Button, PageHeader, Select, Tooltip, Tag } from 'antd';
 import { useParams } from 'react-router-dom';
-import { getPtojectTaskStatus } from '../../selectors/projectTask';
+import { getPtojectTaskStatus } from '../../../selectors/projectTask';
 import { useForm } from '@/hooks/useForm';
 import { useSelector } from '@/modal';
+import { ProjectTaskEntityStatus } from '@/modal/useProjectTask';
 const Option = Select.Option;
 
 export function ProjectDetail() {
   const { id } = useParams();
   const { getOne, project } = useSelector('project');
   const { create } = useSelector('projectTask');
+  const { routeKey } = useSelector('extraHistory');
   const { createSelect, form, setForm } = useForm({ environment: '' });
+  const { getLoading } = useSelector('loading');
 
   useEffect(() => {
     if (id) {
@@ -37,6 +39,46 @@ export function ProjectDetail() {
       });
     }
   }, [form, form.environment, project, setForm]);
+
+  const getBtns = useCallback((data: ProjectTask) => {
+    switch (data.status) {
+    case ProjectTaskEntityStatus.SUCCESS:
+      return <Button>发布</Button>;
+    case ProjectTaskEntityStatus.ERROR:
+      return <Button>重新构建</Button>;
+    default:
+      return '--';
+    }
+  }, []);
+
+  const getStatus = useCallback((data: ProjectTask) => {
+    switch (data.status) {
+    case ProjectTaskEntityStatus.SUCCESS:
+      return (
+        <Tooltip title={data.err_msg}>
+          <Tag color="green">{getPtojectTaskStatus(data.status)}</Tag>
+        </Tooltip>
+      );
+    case ProjectTaskEntityStatus.ERROR:
+      return (
+        <Tooltip title={data.err_msg}>
+          <Tag color="red">{getPtojectTaskStatus(data.status)}</Tag>
+        </Tooltip>
+      );
+    case ProjectTaskEntityStatus.PENDING:
+      return (
+        <Tooltip title={data.err_msg}>
+          <Tag color="blue">{getPtojectTaskStatus(data.status)}</Tag>
+        </Tooltip>
+      );
+    default:
+      return (
+        <Tooltip title={data.err_msg}>
+          <Tag color="orange">{getPtojectTaskStatus(data.status)}</Tag>
+        </Tooltip>
+      );
+    }
+  }, []);
 
   if (!id || !project) return null;
 
@@ -59,13 +101,18 @@ export function ProjectDetail() {
               })}
             </Select>
             &emsp;
-            <Button type="primary" onClick={() => create(+form.environment)}>
+            <Button
+              loading={getLoading(services.projectTask.create)}
+              type="primary"
+              onClick={() => create(+form.environment)}
+            >
               手动编译
             </Button>
           </div>
         }
       />
       <Table<ProjectTask>
+        key={routeKey}
         columns={[
           { title: '构建分支', dataIndex: 'branch' },
           { title: '版本', dataIndex: 'version' },
@@ -84,20 +131,14 @@ export function ProjectDetail() {
           },
           {
             title: '状态',
-            dataIndex: 'status',
-            render: (status: ProjectTask['status']) =>
-              getPtojectTaskStatus(status)
+            render: getStatus
           },
           {
             title: '操作',
-            render: (data: ProjectTask) => (
-              <Button type="link" href={`/project/${data.project_id}`}>
-                查看
-              </Button>
-            )
+            render: getBtns
           }
         ]}
-        rowKey="project_task_id"
+        rowKey="task_id"
         fetch={services.projectTask.getList}
         payload={{ id }}
       />

@@ -13,14 +13,14 @@ export function useProjectTask() {
     async (projectEnvId: number) => {
       const { loading } = getStore();
       try {
-        loading.startLoading(services.project.create);
+        loading.startLoading(services.projectTask.create);
         await services.projectTask.create(projectEnvId);
-        loading.finishLoading(services.project.create);
         message.success('创建成功');
         history.replace('#');
       } catch (error) {
-        loading.finishLoading(services.project.create);
         message.error(error.message);
+      } finally {
+        loading.finishLoading(services.projectTask.create);
       }
     },
     [history]
@@ -85,4 +85,12 @@ export function useProjectTask() {
     getOne,
     project
   };
+}
+
+export enum ProjectTaskEntityStatus {
+  PENDING = 1,
+  DOING = 2,
+  SUCCESS = 3,
+  ERROR = 4,
+  OVERWRITE = 5
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Form, Input, Select } from 'antd';
+import { Form, Input, Select, Switch } from 'antd';
 import { useSelector } from '@/modal';
 import { IEnvsItem } from '@/services/project';
 const Option = Select.Option;
@@ -65,6 +65,13 @@ export function EnvironmentForm({
             </Option>
           ))}
         </Select>
+      </Form.Item>
+      <Form.Item label="自动发布">
+        <Switch
+          checked={!!formData.auto_deploy}
+          onChange={value => onChangeValue('auto_deploy', Number(value))}
+        />
+        ,
       </Form.Item>
     </>
   );
