@@ -54,6 +54,7 @@ export interface Project {
   repository_name: string;
   git_path: string;
   desc: string;
+  upload_floder: string;
   created_at: number;
   user_id: number;
   updated_at: number;
@@ -86,7 +87,7 @@ export interface ProjectTask {
   branch: string;
   version: string;
   commit: string;
-  err_msg: string;
+  infomation: string;
   status: number;
   created_at: number;
   updated_at: number;

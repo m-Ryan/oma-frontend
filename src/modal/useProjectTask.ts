@@ -26,6 +26,36 @@ export function useProjectTask() {
     [history]
   );
 
+  const playback = useCallback(
+    async (taskId: number) => {
+      const { loading } = getStore();
+      try {
+        loading.startLoading(services.projectTask.playback);
+        await services.projectTask.playback(taskId);
+        message.success('创建成功');
+        history.replace('#');
+      } catch (error) {
+        message.error(error.message);
+      } finally {
+        loading.finishLoading(services.projectTask.playback);
+      }
+    },
+    [history]
+  );
+
+  const release = useCallback(async (taskId: number) => {
+    const { loading } = getStore();
+    try {
+      loading.startLoading(services.projectTask.release, taskId);
+      await services.projectTask.release(taskId);
+      message.success('发布成功');
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      loading.finishLoading(services.projectTask.release, taskId);
+    }
+  }, []);
+
   const update = useCallback(
     async (
       projectId: number,
@@ -79,9 +109,11 @@ export function useProjectTask() {
   );
 
   return {
-    remove,
     create,
+    playback,
+    release,
     update,
+    remove,
     getOne,
     project
   };

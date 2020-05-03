@@ -1,6 +1,6 @@
 import { ProjectTaskEntityStatus } from '@/modal/useProjectTask';
 
-export function getPtojectTaskStatus(status: ProjectTaskEntityStatus) {
+export function getProjectTaskStatus(status: ProjectTaskEntityStatus) {
   switch (status) {
   case ProjectTaskEntityStatus.PENDING:
     return '等待中';

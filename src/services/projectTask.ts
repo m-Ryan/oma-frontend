@@ -7,6 +7,28 @@ export const projectTask = {
       project_env_id: projectEnvId
     });
   },
+  playback(taskId: number) {
+    return request.post<ResponseList<Project>>(
+      '/api/project-task/playback',
+      undefined,
+      {
+        params: {
+          task_id: taskId
+        }
+      }
+    );
+  },
+  release(taskId: number) {
+    return request.post<ResponseList<Project>>(
+      '/api/project-task/release',
+      undefined,
+      {
+        params: {
+          task_id: taskId
+        }
+      }
+    );
+  },
   getList(params: { page: number; size: number; id: number }) {
     return request.get<ResponseList<ProjectTask>>('/api/project-task/list', {
       params

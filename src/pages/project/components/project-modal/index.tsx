@@ -35,7 +35,8 @@ export function ProjectModal({
     repository_name: 'react-admin',
     updated_at: 1587306285,
     user_id: 1,
-    environments: [defaultEnv]
+    environments: [defaultEnv],
+    upload_floder: ''
   }
 }: {
   showBtn: React.ReactNode;
@@ -134,6 +135,16 @@ export function ProjectModal({
               label: '仓库路径'
             })}
             placeholder="仓库路径"
+          />
+        </Form.Item>
+
+        <Form.Item label="上传路径">
+          <Input
+            {...createInput('upload_floder', {
+              validator: Validators.required,
+              label: '上传路径'
+            })}
+            placeholder="上传路径"
           />
         </Form.Item>
         <Tabs type="editable-card" onEdit={onEdit}>

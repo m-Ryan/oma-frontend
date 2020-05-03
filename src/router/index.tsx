@@ -1,19 +1,15 @@
-import React from "react";
-import {
-  BrowserRouter,
-  Switch,
-  Route
-} from "react-router-dom";
-import { Home } from "../pages/home/index";
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Home } from '../pages/home/index';
 import { StoreProvider } from '../modal';
-import { Login } from "@/pages/login";
-import { BasicLayout } from "@/layouts/basic-layout";
+import { Login } from '@/pages/login';
+import { BasicLayout } from '@/layouts/basic-layout';
 import { ProjectDetail } from '@/pages/project/project-detail';
 import { SSHConfig } from '@/pages/project/ssh-config';
 import { Preject } from '@/pages/project';
+import { ProjectBuild } from '@/pages/project/project-build';
 
 export const router = (
-
   <BrowserRouter>
     <StoreProvider>
       <Switch>
@@ -23,12 +19,11 @@ export const router = (
           <Switch>
             <Route exact path="/" component={Preject} />
             <Route exact path="/project/ssh" component={SSHConfig} />
+            <Route exact path="/project/build" component={ProjectBuild} />
             <Route exact path="/project/:id/detail" component={ProjectDetail} />
           </Switch>
         </BasicLayout>
-
       </Switch>
     </StoreProvider>
   </BrowserRouter>
-
 );
