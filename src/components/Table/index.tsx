@@ -9,6 +9,7 @@ interface Column<T> {
   title: string;
   dataIndex?: keyof T;
   key?: string;
+  width?: number;
   render?: (data: any) => React.ReactNode;
 }
 
@@ -73,11 +74,14 @@ export function Table<T>(props: Props<T>) {
     }));
   }, [props.columns]) as any;
 
-  const onChange = useCallback((page: number, pageSize?: number) => {
-    setSearch({
-      page
-    });
-  }, [setSearch]);
+  const onChange = useCallback(
+    (page: number, pageSize?: number) => {
+      setSearch({
+        page
+      });
+    },
+    [setSearch]
+  );
 
   return useMemo(() => {
     return (

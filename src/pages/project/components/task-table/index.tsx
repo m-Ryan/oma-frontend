@@ -70,7 +70,7 @@ export function TaskTable() {
         columns={[
           { title: '构建分支', dataIndex: 'branch' },
           { title: '版本', dataIndex: 'version' },
-          { title: '提交信息', dataIndex: 'commit' },
+          { title: '提交信息', dataIndex: 'commit', width: 200 },
           {
             title: '开始时间',
             dataIndex: 'created_at',

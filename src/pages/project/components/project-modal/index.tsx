@@ -42,7 +42,7 @@ export function ProjectModal({
   showBtn: React.ReactNode;
   formData?: Project;
 }) {
-  const { loadingMap } = useSelector('loading');
+  const { getLoading } = useSelector('loading');
   const [visible, setVisible] = useState(false);
   const { form, createInput, verify, setForm } = useForm<Project>(formData);
   const { create, update } = useSelector('project');
@@ -115,7 +115,7 @@ export function ProjectModal({
   );
 
   const renderContent = useMemo(() => {
-    if (loadingMap[services.ssh.getList]) return null;
+    if (getLoading(services.ssh.getList)) return null;
     return (
       <Form>
         <Form.Item label="项目名称">
@@ -163,7 +163,7 @@ export function ProjectModal({
         </Tabs>
       </Form>
     );
-  }, [createInput, form.environments, loadingMap, onChangeEnvironment, onEdit]);
+  }, [createInput, form.environments, getLoading, onChangeEnvironment, onEdit]);
   return (
     <>
       <Modal
@@ -172,7 +172,7 @@ export function ProjectModal({
         okText="确定"
         cancelText="取消"
         centered
-        confirmLoading={loadingMap[services.project.create]}
+        confirmLoading={getLoading(services.project.create)}
         onOk={submit}
         onCancel={() => setVisible(false)}
       >
