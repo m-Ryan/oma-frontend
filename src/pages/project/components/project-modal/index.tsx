@@ -140,11 +140,21 @@ export function ProjectModal({
 
         <Form.Item label="上传路径">
           <Input
-            {...createInput('upload_floder', {
+            {...createInput('upload_path', {
               validator: Validators.required,
               label: '上传路径'
             })}
             placeholder="上传路径"
+          />
+        </Form.Item>
+
+        <Form.Item label="上传目录">
+          <Input
+            {...createInput('upload_floder', {
+              validator: Validators.required,
+              label: '上传目录'
+            })}
+            placeholder="上传目录"
           />
         </Form.Item>
         <Tabs type="editable-card" onEdit={onEdit}>

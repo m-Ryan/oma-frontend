@@ -54,6 +54,7 @@ export interface Project {
   repository_name: string;
   git_path: string;
   desc: string;
+  upload_path: string;
   upload_floder: string;
   created_at: number;
   user_id: number;
